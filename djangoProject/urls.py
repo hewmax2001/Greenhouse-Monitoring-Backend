@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Opens up to the URLs of the read application
     path('api/', include("read.urls")),
 ]

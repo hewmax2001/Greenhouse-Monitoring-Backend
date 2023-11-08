@@ -4,7 +4,15 @@ from rest_framework.authtoken.models import Token
 from read.models import *
 import pytz
 
+# New Zealand Timezone
 NZST = pytz.timezone("Pacific/Auckland")
+
+'''
+Serializers convert models to JSON data format
+Included fields for:
+    Formatted date value with time in Hours, Minutes and Seconds
+    Date only
+'''
 
 
 class SensorDataSerializer(serializers.ModelSerializer):

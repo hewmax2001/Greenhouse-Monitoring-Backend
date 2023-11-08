@@ -7,11 +7,15 @@ from read.viewsets import SensorDataViewSet
 router = DefaultRouter()
 router.register("sensordata", SensorDataViewSet)
 
+'''
+Associating the URLs of the application with the views
+Basis of the API
+'''
+
 urlpatterns = [
     path("", include(router.urls)),
 
     path("sensordata_date/", get_sensordata_date),
-    path("sensordata_date_avg/", get_sensordata_date_avg),
     path("sensordata_latest/", get_latest_sensordata),
     path("sensordata_week/", get_past_week),
 ]

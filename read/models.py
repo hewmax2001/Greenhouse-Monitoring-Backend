@@ -2,8 +2,15 @@ import datetime
 
 from django.db import models
 
+'''
+Model representing a record of sensor data with:
+    Temperature
+    Humidity
+    Soil Moisture
+    Light Intensity
+    Date of Creation
+'''
 
-# Create your models here.
 
 class Sensor_Data(models.Model):
     temp = models.IntegerField(null=True)
