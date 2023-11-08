@@ -81,6 +81,5 @@ def get_day(day):
     data = Sensor_Data(temp=avg_temp, humidity=avg_hum, soil_moisture=avg_soil, light_intensity=avg_light)
     date_format = '%Y-%m-%d'
     date_obj = datetime.strptime(day, date_format)
-    print(date_obj)
     data.create_at = date_obj
     return data
