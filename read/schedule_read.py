@@ -110,10 +110,3 @@ def start():
     scheduler = BackgroundScheduler()
     ### add job for training and stuff
     scheduler.add_job(read_arduino, 'interval', seconds=900)
-    test()
-
-
-def test():
-    obj = Sensor_Data.objects.create(temp=10, humidity=10, soil_moisture=10, light_intensity=10)
-    serializer = SensorDataSerializer(obj)
-    print(serializer.data)
