@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -49,61 +51,10 @@ def get_past_week(request):
     for i in range(7):
         day = today - DT.timedelta(days=i)
         iso = day.isoformat()
-        print(f"{i} days ago: {iso}")
         data = get_day(iso)
         records.append(data)
     serializer = SensorDataSerializer(records, many=True)
     return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_past_week_temp(request):
-    today = DT.date.today()
-    records = []
-    for i in range(7):
-        day = today - DT.timedelta(days=i)
-        iso = day.isoformat()
-        data = get_day(iso)
-        records.append(data)
-    serializer = SensorDataSerializer(records, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_past_week_hum(request):
-    today = DT.date.today()
-    records = []
-    for i in range(7):
-        day = today - DT.timedelta(days=i)
-        iso = day.isoformat()
-        data = get_day(iso)
-        records.append(data.humidity)
-    return Response(records)
-
-
-@api_view(['GET'])
-def get_past_week_soil(request):
-    today = DT.date.today()
-    records = []
-    for i in range(7):
-        day = today - DT.timedelta(days=i)
-        iso = day.isoformat()
-        data = get_day(iso)
-        records.append(data.soil_moisture)
-
-    return Response(records)
-
-
-@api_view(['GET'])
-def get_past_week_light(request):
-    today = DT.date.today()
-    records = []
-    for i in range(7):
-        day = today - DT.timedelta(days=i)
-        iso = day.isoformat()
-        data = get_day(iso)
-        records.append(data.light_intensity)
-    return Response(records)
 
 
 def get_day(day):
@@ -128,5 +79,8 @@ def get_day(day):
     avg_soil /= length
     avg_light /= length
     data = Sensor_Data(temp=avg_temp, humidity=avg_hum, soil_moisture=avg_soil, light_intensity=avg_light)
-    data.create_at = day
+    date_format = '%Y-%m-%d'
+    date_obj = datetime.strptime(day, date_format)
+    print(date_obj)
+    data.create_at = date_obj
     return data

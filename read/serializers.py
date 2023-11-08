@@ -13,6 +13,7 @@ class SensorDataSerializer(serializers.ModelSerializer):
 
     def get_formatted_date(self, obj):
         dateobj = obj.create_at.astimezone(tz=NZST)
+        print("works")
         return dateobj.date().__str__() + " : " + dateobj.time().__str__()
 
     class Meta:

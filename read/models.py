@@ -13,5 +13,5 @@ class Sensor_Data(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.temp.__str__() + " " + self.humidity.__str__() + " " + self.soil_moisture.__str__() + " " + self.light_intensity.__str__() + " " + self.create_at.__str__()
+        return self.create_at
 
