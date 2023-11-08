@@ -8,5 +8,5 @@ class ReadConfig(AppConfig):
     def ready(self):
         from . import schedule_read
         from . import generate_data
-        #generate_data.main()
+        generate_data.main()
         #schedule_read.start()

@@ -4,19 +4,8 @@ from django.db import models
 
 
 # Create your models here.
-class Sensor(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-    # url
-    # reading_time
-    # warning
-
-    def __str__(self):
-        return self.name
-
 
 class Sensor_Data(models.Model):
-    sensor = models.ForeignKey(Sensor, on_delete=models.SET_NULL, null=True)
     temp = models.IntegerField(null=True)
     humidity = models.IntegerField(null=True)
     soil_moisture = models.IntegerField(null=True)
@@ -24,4 +13,5 @@ class Sensor_Data(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.sensor.name + " - " + self.create_at.__str__()
+        return self.temp.__str__() + " " + self.humidity.__str__() + " " + self.soil_moisture.__str__() + " " + self.light_intensity.__str__() + " " + self.create_at.__str__()
+

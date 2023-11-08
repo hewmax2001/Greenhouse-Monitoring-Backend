@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from urllib.request import urlopen
 import json
-
+from read.serializers import *
 from read.models import Sensor_Data
 from iot_api_client import Configuration, ApiClient
 from iot_api_client.apis.tags.properties_v2_api import PropertiesV2Api
@@ -16,14 +16,17 @@ CLIENT_ID = env.str("CLIENT_ID")
 CLIENT_SECRET = env.str("CLIENT_SECRET")
 TEMPERATURE_ID = env.str("TEMPERATURE_ID")
 HUMIDITY_ID = env.str("HUMIDITY_ID")
+SOIL_ID = env.str("SOIL_ID")
+LIGHT_ID = env.str("LIGHT_ID")
 DEVICE_ID = env.str("DEVICE_ID")
 
 
-def created_new_record(sensor_id, humidity, temp):
+def created_new_record(humidity, temp, soil, light):
     try:
-        new_row = Sensor_Data.objects.create(sensor_id=sensor_id,
-                                             humidity=humidity,
-                                             temp=temp)
+        new_row = Sensor_Data.objects.create(humidity=humidity,
+                                             temp=temp,
+                                             soil_moisture=soil,
+                                             light_intensity=light)
         return True
     except:
         return False
@@ -94,7 +97,9 @@ def read_arduino():
 
     temp = read_property(properties, TEMPERATURE_ID)
     humidity = read_property(properties, HUMIDITY_ID)
-    if created_new_record(sensor_id=1, temp=temp, humidity=humidity):
+    soil = read_property(properties, SOIL_ID)
+    light = read_property(properties, LIGHT_ID)
+    if created_new_record(temp=temp, humidity=humidity, soil=soil, light=light):
         print("new record created")
         ## Add testing model
     else:
@@ -104,5 +109,11 @@ def read_arduino():
 def start():
     scheduler = BackgroundScheduler()
     ### add job for training and stuff
-    scheduler.add_job(read_arduino, 'interval', seconds=6)
-    scheduler.start()
+    scheduler.add_job(read_arduino, 'interval', seconds=900)
+    test()
+
+
+def test():
+    obj = Sensor_Data.objects.create(temp=10, humidity=10, soil_moisture=10, light_intensity=10)
+    serializer = SensorDataSerializer(obj)
+    print(serializer.data)
