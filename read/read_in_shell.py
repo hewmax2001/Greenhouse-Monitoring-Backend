@@ -7,6 +7,7 @@ from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
 from djangoProject.settings import env
+from read.alert_notification import start_notify
 
 # Defining variables stored in .env file
 THING_ID = env.str("THING_ID")
@@ -125,3 +126,6 @@ except ApiException as e:
 obj = Sensor_Data.objects.create(temp=temp, humidity=humidity, soil_moisture=soil, light_intensity=light)
 serializer = SensorDataSerializer(obj)
 print(serializer.data)
+
+# Notifying active users
+start_notify(obj)

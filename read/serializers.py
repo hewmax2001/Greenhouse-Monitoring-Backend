@@ -22,12 +22,19 @@ class SensorDataSerializer(serializers.ModelSerializer):
 
     def get_formatted_date(self, obj):
         dateobj = obj.create_at.astimezone(tz=NZST)
-        return dateobj.date().__str__() + " : " + dateobj.strftime('%H:%M:%S')
+        return dateobj.strftime('%d/%m/%Y : %H:%M:%S')
 
     def get_date_only(self, obj):
         dateobj = obj.create_at.astimezone(tz=NZST)
-        return dateobj.date().__str__()
+        return dateobj.strftime('%d/%m')
 
     class Meta:
         model = Sensor_Data
         fields = ('id', 'temp', 'humidity', 'soil_moisture', 'light_intensity', 'create_at', 'formatted_date', 'date_only')
+
+
+class AlertProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AlertProfile
+        fields = '__all__'

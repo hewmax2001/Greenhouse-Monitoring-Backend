@@ -1,23 +1,34 @@
+import json
 from datetime import datetime
+from uuid import uuid4
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from read.models import Sensor_Data
-from read.serializers import SensorDataSerializer
+from read.models import Sensor_Data, AlertProfile
+from read.serializers import SensorDataSerializer, AlertProfileSerializer
 import datetime as DT
 
+from read.alert_notification import start_notify
+
+import pytz
+
+# New Zealand Timezone
+NZST = pytz.timezone("Pacific/Auckland")
 
 # Returns all sensor data records according to a given date attached to a POST request
 @api_view(['POST'])
 def get_sensordata_date(request):
     # Truncates date attached to request
     date = request.POST["date"][:10]
+    print(date)
     records = []
     # Compares all sensor data record's create date with request's date
     for data in Sensor_Data.objects.all():
         # Append to array if associated date
-        if data.create_at.date().__str__() == date:
+        if data.create_at.astimezone(tz=NZST).__str__() == date:
+            print(data.create_at.astimezone(tz=NZST).__str__())
             records.append(data)
 
     # Returns serialized JSON data
@@ -96,3 +107,134 @@ def get_day(day):
     data.create_at = date_obj
     # Return temp record
     return data
+
+
+@api_view(['POST'])
+def get_alert_profile(request):
+    data = json.loads(request.body)
+    print(data["expo_token"])
+    user_token = data["expo_token"]
+
+    try:
+        profile = AlertProfile.objects.get(expoUserToken=user_token)
+    except:
+        return Response({'message' : 'No profile with user token exists'})
+
+    serializer = AlertProfileSerializer(profile)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def create_alert_profile(request):
+
+    user_token = uuid4()
+    subscription_token = uuid4()
+
+    profile = AlertProfile.objects.create(expoUserToken=user_token, subscriptionToken=subscription_token)
+
+    serializer = AlertProfileSerializer(profile)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def set_temperature_alerts(request):
+    user_token = request.POST["expo_token"]
+
+    max_temp = request.POST["max_temp"]
+    min_temp = request.POST["min_temp"]
+
+    if max_temp == 'None':
+        max_temp = None
+
+    if min_temp == 'None':
+        min_temp = None
+
+    profile = AlertProfile.objects.get(expoUserToken=user_token)
+    if not profile:
+        return Response({'message': 'No profile with user token exists'})
+
+    profile.maxTemp = max_temp
+    profile.minTemp = min_temp
+    profile.save()
+
+    return Response({'message': 'Temperature thresholds have been updated'})
+
+
+@api_view(['POST'])
+def set_humidity_alerts(request):
+    user_token = request.POST["expo_token"]
+
+    max_hum = request.POST["max_hum"]
+    min_hum = request.POST["min_hum"]
+
+    if max_hum == 'None':
+        max_hum = None
+
+    if min_hum == 'None':
+        min_hum = None
+
+    profile = AlertProfile.objects.get(expoUserToken=user_token)
+    if not profile:
+        return Response({'message': 'No profile with user token exists'})
+
+    profile.maxHumidity = max_hum
+    profile.minHumidity = min_hum
+    profile.save()
+
+    return Response({'message': 'Humidity thresholds have been updated'})
+
+
+@api_view(['POST'])
+def set_soil_moisture_alerts(request):
+    user_token = request.POST["expo_token"]
+
+    max_soil = request.POST["max_soil"]
+    min_soil = request.POST["min_soil"]
+
+    if max_soil == 'None':
+        max_soil = None
+
+    if min_soil == 'None':
+        min_soil = None
+
+    profile = AlertProfile.objects.get(expoUserToken=user_token)
+    if not profile:
+        return Response({'message': 'No profile with user token exists'})
+
+    profile.maxSoil = max_soil
+    profile.minSoil = min_soil
+    profile.save()
+
+    return Response({'message': 'Soil Moisture thresholds have been updated'})
+
+
+@api_view(['POST'])
+def set_light_intensity_alerts(request):
+    user_token = request.POST["expo_token"]
+
+    max_light = request.POST["max_light"]
+    min_light = request.POST["min_light"]
+
+    if max_light == 'None':
+        max_light = None
+
+    if min_light == 'None':
+        min_light = None
+
+    profile = AlertProfile.objects.get(expoUserToken=user_token)
+    if not profile:
+        return Response({'message': 'Error: No profile with user token exists'})
+
+    profile.maxLight = max_light
+    profile.minLight = min_light
+    profile.save()
+
+    return Response({'message': 'Light Intensity thresholds have been updated'})
+
+
+@api_view(['GET'])
+def test_notify(request):
+    sensor_obj = Sensor_Data.objects.create(temp=60, humidity=0, soil_moisture=0, light_intensity=0)
+    start_notify(sensor_obj)
+
+    return Response({'message': 'This works'})
