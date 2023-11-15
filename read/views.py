@@ -17,6 +17,7 @@ import pytz
 # New Zealand Timezone
 NZST = pytz.timezone("Pacific/Auckland")
 
+
 # Returns all sensor data records according to a given date attached to a POST request
 @api_view(['POST'])
 def get_sensordata_date(request):
@@ -138,10 +139,10 @@ def create_alert_profile(request):
 
 @api_view(['POST'])
 def set_temperature_alerts(request):
-    user_token = request.POST["expo_token"]
-
-    max_temp = request.POST["max_temp"]
-    min_temp = request.POST["min_temp"]
+    data = json.loads(request.body)
+    user_token = data["expo_token"]
+    max_temp = data["max"]
+    min_temp = data["min"]
 
     if max_temp == 'None':
         max_temp = None
@@ -162,10 +163,10 @@ def set_temperature_alerts(request):
 
 @api_view(['POST'])
 def set_humidity_alerts(request):
-    user_token = request.POST["expo_token"]
-
-    max_hum = request.POST["max_hum"]
-    min_hum = request.POST["min_hum"]
+    data = json.loads(request.body)
+    user_token = data["expo_token"]
+    max_hum = data["max"]
+    min_hum = data["min"]
 
     if max_hum == 'None':
         max_hum = None
@@ -186,10 +187,10 @@ def set_humidity_alerts(request):
 
 @api_view(['POST'])
 def set_soil_moisture_alerts(request):
-    user_token = request.POST["expo_token"]
-
-    max_soil = request.POST["max_soil"]
-    min_soil = request.POST["min_soil"]
+    data = json.loads(request.body)
+    user_token = data["expo_token"]
+    max_soil = data["max"]
+    min_soil = data["min"]
 
     if max_soil == 'None':
         max_soil = None
@@ -210,10 +211,10 @@ def set_soil_moisture_alerts(request):
 
 @api_view(['POST'])
 def set_light_intensity_alerts(request):
-    user_token = request.POST["expo_token"]
-
-    max_light = request.POST["max_light"]
-    min_light = request.POST["min_light"]
+    data = json.loads(request.body)
+    user_token = data["expo_token"]
+    max_light = data["max"]
+    min_light = data["min"]
 
     if max_light == 'None':
         max_light = None
