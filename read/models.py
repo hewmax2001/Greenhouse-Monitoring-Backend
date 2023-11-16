@@ -25,6 +25,7 @@ class Sensor_Data(models.Model):
 class AlertProfile(models.Model):
     expoUserToken = models.CharField(max_length=100, blank=False, null=False)
     subscriptionToken = models.CharField(max_length=100, blank=False, null=False)
+    active = models.BooleanField(default=True)
 
     maxTemp = models.IntegerField(validators=[MinValueValidator(-20), MaxValueValidator(50)], null=True, default=None)
     minTemp = models.IntegerField(validators=[MinValueValidator(-20), MaxValueValidator(50)], null=True, default=None)

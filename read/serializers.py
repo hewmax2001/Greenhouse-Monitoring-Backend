@@ -22,7 +22,7 @@ class SensorDataSerializer(serializers.ModelSerializer):
 
     def get_formatted_date(self, obj):
         dateobj = obj.create_at.astimezone(tz=NZST)
-        return dateobj.strftime('%d/%m/%Y : %H:%M:%S')
+        return dateobj.strftime('%d/%m/%Y : %H:%M')
 
     def get_date_only(self, obj):
         dateobj = obj.create_at.astimezone(tz=NZST)

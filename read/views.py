@@ -28,7 +28,7 @@ def get_sensordata_date(request):
     # Compares all sensor data record's create date with request's date
     for data in Sensor_Data.objects.all():
         # Append to array if associated date
-        if data.create_at.astimezone(tz=NZST).__str__() == date:
+        if data.create_at.astimezone(tz=NZST).__str__()[:10] == date:
             print(data.create_at.astimezone(tz=NZST).__str__())
             records.append(data)
 
@@ -177,6 +177,7 @@ def set_humidity_alerts(request):
     profile = AlertProfile.objects.get(expoUserToken=user_token)
     if not profile:
         return Response({'message': 'No profile with user token exists'})
+
 
     profile.maxHumidity = max_hum
     profile.minHumidity = min_hum

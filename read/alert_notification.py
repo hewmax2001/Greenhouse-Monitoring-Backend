@@ -1,6 +1,6 @@
 import requests
 from read.models import Sensor_Data, AlertProfile
-
+from datetime import datetime
 
 def start_notify(sensor_obj):
     temp = sensor_obj.temp
@@ -21,12 +21,12 @@ def temp_alerts(temp):
     for profile in temp_max_qset:
         title = "Temperature Alert!"
         body = "Maximum Temperature Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        send_notification(profile, title, body)
 
     for profile in temp_min_qset:
         title = "Temperature Alert!"
         body = "Minimum Temperature Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        send_notification(profile, title, body)
 
 
 def hum_alerts(hum):
@@ -36,12 +36,12 @@ def hum_alerts(hum):
     for profile in hum_max_qset:
         title = "Humidity Alert!"
         body = "Maximum Humidity Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        send_notification(profile, title, body)
 
     for profile in hum_min_qset:
         title = "Humidity Alert!"
         body = "Minimum Humidity Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        send_notification(profile, title, body)
 
 
 def soil_alerts(soil):
@@ -50,13 +50,13 @@ def soil_alerts(soil):
 
     for profile in soil_max_qset:
         title = "Soil Moisture Alert!"
-        body = "Soil Moisture Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        body = "Maximum Soil Moisture Threshold Breached!"
+        send_notification(profile, title, body)
 
     for profile in soil_min_qset:
         title = "Soil Moisture Alert!"
-        body = "Soil Moisture Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        body = "Minimum Soil Moisture Threshold Breached!"
+        send_notification(profile, title, body)
 
 
 def light_alerts(light):
@@ -66,23 +66,24 @@ def light_alerts(light):
     for profile in light_max_qset:
         title = "Light Intensity Alert!"
         body = "Maximum Light Intensity Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        send_notification(profile, title, body)
 
     for profile in light_min_qset:
         title = "Light Intensity Alert!"
         body = "Minimum Light Intensity Threshold Breached!"
-        send_notification(profile.subscriptionToken, title, body)
+        send_notification(profile, title, body)
 
 
-def send_notification(sub_id, title, body):
-    url = 'https://app.nativenotify.com/api/notification'
-    json_obj = {
-        'subID': sub_id,
-        'appId': '14719',
-        'appToken': "fS59VdsG6wSUsAUbYddt18",
-        'title': title,
-        'body': body,
-        'dateSent': "11-11-2023 9:39PM",
-     }
+def send_notification(profile, title, body):
+    if profile.active:
+        sub_id = profile.subscriptionToken
+        url = 'https://app.nativenotify.com/api/indie/notification'
+        json_obj = {
+            'subID': sub_id,
+            'appId': '14719',
+            'appToken': "fS59VdsG6wSUsAUbYddt18",
+            'title': title,
+            'message': body,
+         }
 
-    x = requests.post(url, json=json_obj)
+        x = requests.post(url, json=json_obj)
